@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import styles from './Styles.css';
 import Estatejson from '../build/contracts/Estate.json'
 
+import {pinJSONToIPFS} from './MintFunc'
+
 
 class Application extends Component{
     constructor(props) {
@@ -10,7 +12,12 @@ class Application extends Component{
         this.state = {
             connect:false,
             chainaccount: "",
-            chaincontract: null
+            chaincontract: null,
+            home_address: "",
+            userid:"",
+            ipfskey:"93a73d8ffb7b015cf03e",
+            ipfssecret:"b5575b1500bebe3f875e2a451bd587aa79ccfc2f5f5311f68d666c40fb5cf0a2",
+            homes: []
         }
     }
     async componentWillMount() {
@@ -36,6 +43,7 @@ class Application extends Component{
             window.ethereum.on('accountsChanged', function(accounts){
                 console.log("account upon keeper:",accounts[0]);
 
+
             })
         }
     }
@@ -45,29 +53,123 @@ class Application extends Component{
         this.setState({chainaccount:accounts[0]})
         console.log("account:", this.state.chainaccount)
         const ethNetwork_userid = await window.web3.eth.net.getId()
+        this.setState({userid:ethNetwork_userid})
         console.log("Network Id (likely 5777 for ganache):",ethNetwork_userid)
         if (Estatejson.networks[ethNetwork_userid]){
             const abstract_binary_interface = Estatejson.abi
             // an abi is just an interface between react and solidity but as a variable here to allow for use in contract initiation
             const ethNetwork_address = Estatejson.networks[ethNetwork_userid].address
+            console.log("HERE++++++", ethNetwork_address)
             const contract = new web3.eth.Contract(abstract_binary_interface,ethNetwork_address)
             this.setState({chaincontract:contract})
             console.log(this.state.chaincontract)
-
-
-
         }
 
         //window.ethereum.wallet.eth_signTypedData( ,"Please sign this document to verify your address",)
         //this.AccountKeeper()
     }
 
+
+    reqtokenuri = async(address, description) => {
+        const metadata = new Object();
+        metadata.address = address;
+        metadata.description = description;
+
+        const pinataResponse = await pinJSONToIPFS(metadata);
+        if (!pinataResponse.success) {
+            return {
+                success: false,
+                status: "Something went wrong while uploading your tokenURI.",
+            }
+        }
+        const tokenURI = pinataResponse.pinataUrl;
+        return tokenURI
+    }
+
+
+    pinJSONToIPFS = async(JSONBody) => {
+        const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+        const axios = require('axios');
+        //making axios POST request to Pinata
+        return axios
+            .post(url, JSONBody, {
+                headers: {
+                    pinata_api_key: this.state.ipfskey,
+                    pinata_secret_api_key: this.state.ipfssecret,
+                }
+            })
+            .then(function (response) {
+                return {
+                    success: true,
+                    pinataUrl: "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash
+                };
+            })
+            .catch(function (error) {
+                console.log(error)
+                return {
+                    success: false,
+                    message: error.message,
+                }
+
+            });
+    };
+
+
+    mint = async (addressofhouse,description) => {
+        const tokenuri = this.reqtokenuri(addressofhouse,description)
+        console.log("tokenuri:",tokenuri)
+        const house = await this.state.chaincontract.methods.mint(tokenuri).send({from:this.state.chainaccount})
+        console.log(house)
+        console.log("success")
+        this.setState({
+            homes: [...this.state.homes, house]
+        })
+    }
+
+
     render() {
         return (
             <div>
-                <button className="Sign in Button" style={styles.button}
-                        onClick={() =>alert("Please add meta")}>Log Into MetaMask</button>
+                <span> </span>
+                <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+                    <a
+                        className="navbar-brand col-sm-3 col-md-2 mr-0"
+                        href="https://github.com/giovannivignone"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        NFT Real Estate
+                    </a>
+                    <ul className="navbar-nav px-3">
+                        <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
+                            <small className="text-white"><span id="account">account name: {this.state.chainaccount}</span></small>
+                        </li>
+                    </ul>
+                </nav>
+                <br></br>
+                <h1 id="title"> Mint a House </h1>
+                <p>
+                    Simply add your asset's link, name, and description, then press "Mint."
+                </p>
+                <form>
+                    <h2>House Address: </h2>
+                    <input
+                        type="text"
+                        placeholder="e.g. 123 Duke Drive!"
+                        onChange={(event) => this.setState({homeaddress:event.target.value})}
+                    />
+                    <h2>House Description: </h2>
+                    <input
+                        type="text"
+                        placeholder="e.g. 5 bedrooms 2 baths)"
+                        onChange={(event) => this.setState({homedescription:event.target.value})}
+                    />
+                </form>
+                <button id="mintButton" onClick={() =>this.mint(this.state.homeaddress,this.state.homedescription)}>
+                    Mint NFT
+                </button>
             </div>
+
         );
     }
 }

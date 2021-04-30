@@ -6,7 +6,7 @@ contract Estate is ERC721Full{
     constructor () ERC721Full ("Property","ESTATES") public{
         propertycounter = 0;
     }
-    function list_home(string memory tokenURI) public returns (uint256){
+    function mint(string memory tokenURI) public returns (uint256){
         uint256 House = propertycounter;
         _mint(msg.sender, House);
         _setTokenURI(House, tokenURI);
