@@ -146,10 +146,15 @@ class Application extends Component{
                         </li>
                     </ul>
                 </nav>
-                <br></br>
+                <br>
+
+                </br>
+                <br>
+
+                </br>
                 <h1 id="title"> Mint a House </h1>
                 <p>
-                    Simply add your asset's link, name, and description, then press "Mint."
+
                 </p>
                 <form>
                     <h2>House Address: </h2>
