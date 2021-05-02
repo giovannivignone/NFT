@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Estate from '../builds/contracts/Estate.json'
+import Estate from '../build/contracts/Estate.json'
 import web3 from "web3";
 
 export const reqtokenuri = async(url, address, description) => {

@@ -1,7 +1,7 @@
 import web3 from 'web3';
 import React, {Component} from "react";
 import './Styles.css';
-import Estatejson from '../builds/contracts/Estate.json'
+import Estatejson from '../build/contracts/Estate.json'
 
 import {pinJSONToIPFS} from './MintFunc'
 
