@@ -1,6 +1,6 @@
 import web3 from 'web3';
 import React, {Component} from "react";
-import styles from './Styles.css';
+import './Styles.css';
 import Estatejson from '../build/contracts/Estate.json'
 
 import {pinJSONToIPFS} from './MintFunc'
@@ -129,7 +129,7 @@ class Application extends Component{
 
     render() {
         return (
-            <div>
+            <div className="App">
                 <span> </span>
                 <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
                     <a
@@ -152,25 +152,28 @@ class Application extends Component{
                 <br>
 
                 </br>
-                <h1 id="title"> Mint a House </h1>
+                <h1 id="title"> Mint a House 🏠</h1>
                 <p>
 
                 </p>
                 <form>
-                    <h2>House Address: </h2>
+                    <h3>House Address: </h3>
                     <input
                         type="text"
                         placeholder="e.g. 123 Duke Drive!"
                         onChange={(event) => this.setState({homeaddress:event.target.value})}
                     />
-                    <h2>House Description: </h2>
+                    <h3>House Description: </h3>
                     <input
                         type="text"
-                        placeholder="e.g. 5 bedrooms 2 baths)"
+                        placeholder="e.g. 5 bedrooms 2 baths"
                         onChange={(event) => this.setState({homedescription:event.target.value})}
                     />
                 </form>
-                <button id="mintButton" onClick={() =>this.mint(this.state.homeaddress,this.state.homedescription)}>
+                <br>
+
+                </br>
+                <button className="btn-1" id="mintButton" onClick={() =>this.mint(this.state.homeaddress,this.state.homedescription)}>
                     Mint NFT
                 </button>
             </div>
