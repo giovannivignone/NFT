@@ -19,7 +19,7 @@ Instructions
   - cd nft-realestate
   - yarn install
   - yarn start
-6. Here is the most complex part, and you will get errors with metamask if you do not do the following. In an IDE open the project. Now you are going to want to open your terminal again with cd nft-realestate, are run npm install -g truffle, then the next command you are going to want to run is truffle compile. Then run truffle migrate. You will create a new build folder. Delete the old build folder in src, and move the new one into its place.
+6. Here is the most complex part, and you will get errors with metamask if you do not do the following. In an IDE open the project. Now you are going to want to open your terminal again with cd nft-realestate, are run npm install -g truffle, then the next command you are going to want to run is truffle init. Then truffle compile. Then run truffle migrate. You will create a new build folder. Delete the old build folder in src, and move the new one into its place.
 7. Open in a chrome browser: http://localhost:3000/
 8. Choose the ganache testing account in metamask which should be loaded with 100 ETH for testing, and choose the ganache 
    network you added to connect.
